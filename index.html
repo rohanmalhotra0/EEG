@@ -1,933 +1,433 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love Island ROI & Popularity Analysis</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Green Sticker — Slide Deck</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
+        :root {
+            --green: #22A06B;
+            --green-dark: #15724B;
+            --green-light: #E6F5EE;
+            --muted: #E5E7EB;
+            --text: #0B1F17;
+            --red: #C53030;
+            --red-light: #F56565;
+            --purple: #6B46C1
+        }
+
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            box-sizing: border-box
         }
 
         body {
-            font-family: 'Segoe UI', 'Helvetica Neue', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e, #0f3460);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            color: white;
-            line-height: 1.6;
-            overflow-x: hidden;
             margin: 0;
-            padding: 0;
+            font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            color: var(--text);
+            background: #fff
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
+        /* Layout */
         .slide {
             min-height: 100vh;
-            padding: 60px 40px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-            position: relative;
-            opacity: 0;
-            transform: translateY(50px);
-            animation: slideInUp 1s ease forwards;
-            border-bottom: 2px solid rgba(78, 205, 196, 0.2);
-            margin-bottom: 20px;
+            justify-content: center;
+            padding: 32px
         }
 
-        .slide:last-child {
-            border-bottom: none;
+        .slide__inner {
+            max-width: 1100px;
+            width: 100%;
+            border: 1px solid var(--muted);
+            border-radius: 14px;
+            padding: 32px;
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05)
         }
 
-        .slide-divider {
-            height: 4px;
-            background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.5), rgba(78, 205, 196, 0.8), rgba(78, 205, 196, 0.5), transparent);
-            margin: 0;
-            position: relative;
-        }
-
-        .slide-divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 12px;
-            height: 12px;
-            background: #4ECDC4;
-            border-radius: 50%;
-            box-shadow: 0 0 20px rgba(78, 205, 196, 0.6);
-        }
-
-        .slide:nth-child(1) { animation-delay: 0.2s; }
-        .slide:nth-child(2) { animation-delay: 0.4s; }
-        .slide:nth-child(3) { animation-delay: 0.6s; }
-        .slide:nth-child(4) { animation-delay: 0.8s; }
-        .slide:nth-child(5) { animation-delay: 1.0s; }
-        .slide:nth-child(6) { animation-delay: 1.2s; }
-        .slide:nth-child(7) { animation-delay: 1.4s; }
-
-        @keyframes slideInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .title-slide {
-            background: rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            margin: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        .slide__meta {
+            color: var(--green-dark);
+            margin-bottom: 12px;
+            font-weight: 600
         }
 
         h1 {
-            font-size: 3.5em;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            font-family: 'Montserrat', 'Segoe UI', sans-serif;
-            font-weight: 700;
-            letter-spacing: -1px;
-            animation: fadeInScale 1.2s ease-out;
+            color: var(--green-dark);
+            margin: 0 0 16px;
+            text-align: center
         }
 
-        h2 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            animation: fadeInLeft 1s ease-out 0.3s both;
+        .grid {
+            display: grid;
+            gap: 20px
         }
 
-        h3 {
-            font-size: 2em;
-            margin-bottom: 15px;
-            font-family: 'Nunito', 'Segoe UI', sans-serif;
-            font-weight: 700;
-            animation: fadeInRight 1s ease-out 0.5s both;
+        .two {
+            grid-template-columns: 1fr 1fr
         }
 
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
+        .three {
+            grid-template-columns: repeat(3, 1fr)
+        }
+
+        @media(max-width:900px) {
+
+            .two,
+            .three {
+                grid-template-columns: 1fr
             }
         }
 
-        @keyframes fadeInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .card {
+            border: 1px solid var(--muted);
+            border-radius: 12px;
+            padding: 16px;
+            background: #fafafa
         }
 
-        @keyframes fadeInRight {
-            from {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .hero {
+            background: var(--green-light);
+            border: 1px dashed var(--green-dark);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center
         }
 
-        .subtitle {
-            font-size: 1.8em;
-            margin-top: 30px;
-            font-weight: 300;
-            opacity: 0.9;
-            font-family: 'Open Sans', 'Segoe UI', sans-serif;
-            animation: fadeInUp 1s ease-out 0.6s both;
-        }
-
-        .tagline {
-            margin-top: 50px;
-            font-size: 1.2em;
-            opacity: 0.8;
-            font-family: 'Source Sans Pro', 'Segoe UI', sans-serif;
-            font-weight: 400;
-            animation: fadeInUp 1s ease-out 0.9s both;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .framework {
-            display: flex;
-            justify-content: space-around;
-            margin: 50px 0;
-            text-align: center;
+        .chart {
             width: 100%;
-            max-width: 1200px;
-            animation: fadeInUp 1s ease-out 0.8s both;
+            height: 400px;
+            border: 1px solid var(--muted);
+            border-radius: 12px;
+            background: #fff
         }
 
-        .framework-card {
-            background: rgba(78, 205, 196, 0.8);
-            backdrop-filter: blur(15px);
-            padding: 40px 30px;
-            border-radius: 20px;
-            color: white;
-            flex: 1;
-            margin: 0 10px;
-            box-shadow: 0 15px 35px rgba(78, 205, 196, 0.3);
-            border: 1px solid rgba(78, 205, 196, 0.3);
-            transition: all 0.3s ease;
-            animation: cardFloat 3s ease-in-out infinite;
-        }
-
-        .framework-card:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        .framework-card:nth-child(2) {
-            background: rgba(78, 205, 196, 0.6);
-            animation-delay: 0.5s;
-        }
-
-        .framework-card:nth-child(3) {
-            background: rgba(78, 205, 196, 0.4);
-            animation-delay: 1s;
-        }
-
-        .framework-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-
-        @keyframes cardFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .framework-card h2 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .framework-card p {
-            font-size: 1.3em;
-            line-height: 1.4;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            font-weight: 400;
-        }
-
-        .chart-container {
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(20px);
-            padding: 30px;
-            border-radius: 20px;
-            margin: 30px 0;
+        iframe {
             width: 100%;
-            max-width: 1200px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            min-height: 360px;
+            border: 0;
+            border-radius: 12px
+        }
+
+        img.logo {
+            max-width: 200px;
+            margin: 8px auto 16px;
+            display: block
+        }
+
+        .pill {
+            display: inline-block;
+            padding: .25rem .6rem;
+            border-radius: 999px;
+            background: var(--green-light);
+            color: var(--green-dark);
+            font-size: .8rem
+        }
+
+        .foot {
+            font-size: .85rem;
+            color: #245543;
+            margin-top: 8px
+        }
+
+        .center {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: chartSlideIn 1s ease-out;
-            transition: all 0.3s ease;
+            justify-content: center
         }
 
-        .chart-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        .icon {
+            font-size: 28px
         }
 
-        @keyframes chartSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .chart-container > div {
-            width: 100% !important;
-            height: 500px !important;
-        }
-
-        .insight {
-            font-style: italic;
-            font-size: 1.3em;
-            margin: 30px 0;
-            padding: 25px;
-            background: rgba(78, 205, 196, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            border-left: 4px solid #4ECDC4;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            font-weight: 500;
-            max-width: 800px;
-            animation: insightGlow 2s ease-in-out infinite alternate;
-            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.2);
-        }
-
-        @keyframes insightGlow {
-            from {
-                box-shadow: 0 10px 25px rgba(78, 205, 196, 0.2);
-                border-left-color: #4ECDC4;
-            }
-            to {
-                box-shadow: 0 15px 35px rgba(78, 205, 196, 0.4);
-                border-left-color: #00D4AA;
-            }
-        }
-
-        .metrics {
-            display: flex;
-            justify-content: space-around;
-            margin: 50px 0;
-            text-align: center;
-            width: 100%;
-            max-width: 1000px;
-            animation: fadeInUp 1s ease-out 1s both;
-        }
-
-        .metric-card {
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(15px);
-            padding: 35px 25px;
-            border-radius: 20px;
-            flex: 1;
-            margin: 0 10px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s ease;
-            animation: metricPulse 2s ease-in-out infinite;
-        }
-
-        .metric-card:nth-child(1) { animation-delay: 0s; }
-        .metric-card:nth-child(2) { animation-delay: 0.3s; }
-        .metric-card:nth-child(3) { animation-delay: 0.6s; }
-
-        .metric-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
-        }
-
-        @keyframes metricPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        .metric-card h3 {
-            font-size: 2em;
-            margin-bottom: 15px;
-            font-family: 'Nunito', 'Segoe UI', sans-serif;
-            font-weight: 700;
-        }
-
-        .metric-card p {
-            font-size: 1.5em;
-            margin: 0;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            font-weight: 500;
-        }
-
-        .scroll-indicator {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(78, 205, 196, 0.9);
-            backdrop-filter: blur(10px);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-family: 'Inter', sans-serif;
-            z-index: 1000;
-            animation: scrollBounce 2s infinite;
-            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .scroll-indicator:hover {
-            transform: scale(1.1);
-            background: rgba(78, 205, 196, 1);
-        }
-
-        @keyframes scrollBounce {
-            0%, 100% { 
-                opacity: 0.8; 
-                transform: translateY(0);
-            }
-            50% { 
-                opacity: 1; 
-                transform: translateY(-5px);
-            }
-        }
-
-        /* Smooth scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Enhanced title slide effects */
-        .title-slide {
-            background: rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            margin: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .title-slide::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 30% 20%, rgba(78, 205, 196, 0.08) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 80%, rgba(255, 107, 107, 0.08) 0%, transparent 50%);
-            z-index: -1;
-        }
-
-        .title-slide h1 {
-            position: relative;
-            z-index: 2;
-            color: #4ECDC4;
-            text-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
-            animation: titleGlow 4s ease-in-out infinite;
-        }
-
-        @keyframes titleGlow {
-            0%, 100% { text-shadow: 0 0 20px rgba(78, 205, 196, 0.3); }
-            50% { text-shadow: 0 0 30px rgba(78, 205, 196, 0.5); }
-        }
-
-        .title-slide .subtitle {
-            position: relative;
-            z-index: 2;
-            color: #45B7D1;
-            opacity: 0.9;
-        }
-
-        .title-slide .tagline {
-            position: relative;
-            z-index: 2;
-            color: #45B7D1;
-            opacity: 0.8;
-        }
-
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .slide {
-                padding: 40px 20px;
-            }
-            
-            h1 {
-                font-size: 2.5em;
-            }
-            
-            
-            .framework {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .framework-card {
-                margin: 0;
-            }
-            
-            .metrics {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .metric-card {
-                margin: 0;
-            }
+        ul {
+            margin: 0 0 8px 18px
         }
     </style>
 </head>
+
 <body>
-    <div class="scroll-indicator">Scroll to navigate ↓</div>
 
-    <!-- Slide 1: Title -->
-    <div class="slide title-slide">
-        <h1>Love Island ROI & Popularity Analysis</h1>
-        <div class="subtitle">Evaluating Contestants for Future Seasons/Spin-Offs</div>
-        <div class="tagline">Data-Driven Insights for Production Strategy</div>
-    </div>
-
-    <!-- Slide Divider -->
-    <div class="slide-divider"></div>
-
-    <!-- Slide 2: Framework -->
-    <div class="slide">
-        <h1>Our Analysis Framework</h1>
-        <div class="framework">
-            <div class="framework-card">
-                <h2>Reach</h2>
-                <p>Social media growth and audience expansion across Instagram and TikTok platforms.</p>
-            </div>
-            <div class="framework-card">
-                <h2>Engagement</h2>
-                <p>Viewer interaction quality measured through polls, screen time efficiency, and story views.</p>
-            </div>
-            <div class="framework-card">
-                <h2>ROI</h2>
-                <p>Return on investment considering appearance fees, PR costs, and audience value generated.</p>
+    <!-- Slide 0: Title -->
+    <section class="slide" id="slide-0">
+        <div class="slide__inner">
+            <div class="slide__meta"><span class="pill">Slide 0</span> Welcome</div>
+            <img src="greenStickerLogo.png" alt="Green Sticker Logo" class="logo" />
+            <h1>Green Sticker</h1>
+            <p style="font-size:1.2rem;max-width:700px;margin:0 auto 20px;text-align:center">Accessible technology designed to
+                empower children with disabilities</p>
+            <div class="grid two" style="margin-top:16px">
+                <div class="hero">
+                    <strong>Our Mission</strong>
+                    <p>Provide low‑cost, easy‑to‑use access tools so every child can participate fully online.</p>
+                </div>
+                <div class="hero">
+                    <strong>Our Approach</strong>
+                    <p>Leverage computer vision and voice technologies directly in the browser, no expensive hardware
+                        required.</p>
+                </div>
             </div>
         </div>
-    </div>
+        </section>
+    <!-- Slide 1: Purpose & Problem (combined) -->
+    <section class="slide" id="slide-1">
+        <div class="slide__inner">
+            <div class="slide__meta"><span class="pill">Slide 1</span> Purpose & Problem</div>
+            <h1>Turning Barriers into Opportunities</h1>
+            <div class="grid two">
+                <div class="card">
+                    <p><strong>Purpose </strong></p>
+                    <ul>
+                        <li>We build lightweight, low‑cost tools so children with physical
+                        disabilities can interact online with ease and independence.</li>
+                    </ul>
+                        <p><strong>Problem </strong><p>
+                    <ul>
+                        <li>Many assistive devices cost thousands of dollars.</li>
+                        <li>Mouse/keyboard assumes fine motor control.</li>
+                        <li>Teachers lack affordable, scalable resources.</li>
+                    </ul>
 
-    <!-- Slide Divider -->
-    <div class="slide-divider"></div>
+                    
 
-    <!-- Slide 3: Reach Growth -->
-    <div class="slide">
-        <h1>Reach Growth Analysis</h1>
-        <div class="chart-container">
-            <div id="reach-chart" style="width: 100%; height: 500px;"></div>
-        </div>
-        <div class="insight">
-            <strong>Key Insight:</strong> Waylor & Sustin dominate growth, but Waylor does it at lower cost.
-        </div>
-    </div>
-
-    <!-- Slide Divider -->
-    <div class="slide-divider"></div>
-
-    <!-- Slide 4: Engagement -->
-    <div class="slide">
-        <h1>Engagement Efficiency</h1>
-        <div class="chart-container">
-            <div id="engagement-chart" style="width: 100%; height: 500px;"></div>
-        </div>
-        <div class="insight">
-            <strong>Key Insight:</strong> Screen time and reach are the strongest predictors of poll ratings.
-        </div>
-    </div>
-
-    <!-- Slide Divider -->
-    <div class="slide-divider"></div>
-
-    <!-- Slide 5: ROI Analysis -->
-    <div class="slide">
-        <h1>ROI Analysis</h1>
-        <div class="chart-container">
-            <div id="roi-chart" style="width: 100%; height: 500px;"></div>
-        </div>
-        <div class="insight">
-            <strong>Key Insight:</strong> Waylor yields best ROI, Sustin is costly, Clandria underperforms.
-        </div>
-    </div>
-
-    <!-- Slide Divider -->
-    <div class="slide-divider"></div>
-
-    <!-- Slide 6: Persona Clustering -->
-    <div class="slide">
-        <h1>Persona Fit Analysis</h1>
-        <div class="chart-container">
-            <div id="persona-3d-chart" style="width: 100%; height: 500px;"></div>
-        </div>
-        <div class="insight">
-            <strong>Key Insight:</strong> Contestants split into two camps: Efficient Fan Favorites vs Global High-Cost Stars.
-        </div>
-    </div>
-
-    <!-- Slide Divider -->
-    <div class="slide-divider"></div>
-
-    <!-- Slide 7: Recommendation -->
-    <div class="slide">
-        <h1>Our Spin-Off Star: Waylor Tilliams</h1>
-        <div class="metrics">
-            <div class="metric-card">
-                <h3>Highest Ratings</h3>
-                <p>9.0/10 Average</p>
-            </div>
-            <div class="metric-card">
-                <h3>Strongest Growth</h3>
-                <p>+600K Followers</p>
-            </div>
-            <div class="metric-card">
-                <h3>Best ROI</h3>
-                <p>$7.6 per $100K</p>
+                </div>
+                <div class="card">
+                    
+                    <div id="chart-problem-costs" class="chart" aria-label="Cost comparison"></div>
+                </div>
             </div>
         </div>
-        <div class="insight">
-            <strong>Runner-up:</strong> Sustin Ahepard for global marketability
+    </section>
+
+    <!-- Slide 2: Market -->
+    <section class="slide" id="slide-2">
+        <div class="slide__inner">
+            <div class="slide__meta"><span class="pill">Slide 2</span> Market</div>
+            
+            <div class="grid two">
+                <div class="card">
+                    
+                        <p><strong>Prediction For Inclusive Tech </strong><p>
+         
+                    <ul>
+                        <li><strong>2024:</strong> Assistive tech ≈ <strong>$26.8B</strong> (IMARC).</li>
+                        <li><strong>2033:</strong> projected ≈ <strong>$41.0B</strong> (CAGR ≈ 4.3%).</li>
+                        <li><strong>2025–2029:</strong> +$6.3B growth (Technavio).</li>
+                    </ul>
+                    <p>There is a huge untaped market for accesability technology that no one is taking advantage of.<p>
+                </div>
+                <div class="card">
+                    <div id="chart-market-growth" class="chart" aria-label="Market growth"></div>
+                </div>
+            </div>
         </div>
-        <div class="insight">
-            Perfect balance of fan appeal, growth potential, and cost efficiency
+    </section>
+
+    <!-- Slide 3: Competition -->
+    <section class="slide" id="slide-3">
+        <div class="slide__inner">
+            <div class="slide__meta"><span class="pill">Slide 3</span> Competition</div>
+            <h1>Real Competitors, Clearer Difference</h1>
+            <div class="grid two">
+                <div class="card">
+                    <table style="width:92%;border-collapse:collapse;margin:auto;text-align:center">
+                        <tr style="font-weight:700;background:#f5f5f5">
+                            <th style="padding:8px">Competitor</th>
+                            <th style="padding:8px">Hardware</th>
+                            <th style="padding:8px">Cost</th>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px">Tobii</td>
+                            <td style="padding:8px">Eye‑tracker</td>
+                            <td style="padding:8px">$2,000–4,000+</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px">IRISBOND</td>
+                            <td style="padding:8px">Eye‑gaze camera</td>
+                            <td style="padding:8px">$1,000–3,000+</td>
+                        </tr>
+                        <tr style="font-weight:700;color:var(--green-dark);background:var(--green-light)">
+                            <td style="padding:8px">Green Sticker</td>
+                            <td style="padding:8px">Webcam + sticker</td>
+                            <td style="padding:8px">$0–20</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <div id="chart-competition" class="chart" aria-label="Radar chart"></div>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Slide 4: Solution -->
+    <section class="slide" id="slide-4">
+        <div class="slide__inner">
+            <div class="slide__meta"><span class="pill">Slide 4</span> Solution</div>
+            <h1>What is Green Sticker</h1>
+            <div class="grid two">
+                <div class="card">
+                    <p><strong>What is Green Sticker</strong></p>
+                    <ul>
+                        <li>Chrome extension interprets a <strong>green sticker</strong> (computer vision).</li>
+                        <li><strong>Voice commands</strong> replace clicks.</li>
+                        <li><strong>On‑screen keyboard</strong> enables typing without hardware.</li>
+                    </ul>
+                    <div class="hero" aria-label="Flow diagram placeholder">
+                        <strong>Flow:</strong> Webcam → Sticker Detection → Cursor Overlay → Voice/Keyboard → Website
+                    </div>
+                </div>
+                <div class="card">
+                    <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="Solution Demo"></iframe>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+   
+
+    <!-- Slide 6: Business Model -->
+    <section class="slide" id="slide-5">
+        <div class="slide__inner">
+            <div class="slide__meta"><span class="pill">Slide 5</span> Business Model</div>
+            <h1>Free to Users, Funded by Accessibility Budgets</h1>
+            <div class="grid two">
+                <div class="card">
+                    <strong><p>Business Model</p></strong>
+                    <ul>
+                        <li>Classify tool as <strong>assistive technology</strong> under IDEA.</li>
+                        <li>Public subsidies → schools/districts → free student access.</li>
+                        <li>Partnerships with districts & nonprofits.</li>
+                    </ul>
+                    <div class="hero">Government Funds → Schools → Students (Free Access)</div>
+                </div>
+                <div class="card">
+                    <div id="chart-bizmodel" class="chart" aria-label="Adoption projection"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="slide-6">
+        <div class="slide__inner">
+            <div class="slide__meta"><span class="pill">Slide 6</span> Who Am I</div>
+            <h1>Who Am I?</h1>
+            <div class="grid two">
+                <div class="card">
+                    <p>Growing up with <strong>radioulnar synostosis</strong> taught me
+                        that adaptation comes from technology, and an inclusive mindset that drives everything I do.</p>
+                    <ul>
+                        <li><strong>Founder:</strong> Created STEM Unified to expand STEM access for students with
+                            disabilities.</li>
+                        <li><strong>Background:</strong> Computer Science & Economics student, passionate about building
+                            simple, scalable tools with impact.</li>
+                        <li><strong>Experience:</strong> Internship at ECLC, where I witnessed first-hand the
+                            challenges educators and students with disabilities face.</li>
+                    </ul>
+                  
+                </div>
+                <div class="card" style="display:flex;justify-content:center;align-items:center">
+                    <img src="rohanPhoto.jpg" alt="Photo of Rohan Malhotra"
+                        style="max-width:60%;height:auto;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.1)" />
+                </div>
+            </div>
+        </div>
+        </section>
+    
+    
+    
+
+    <!-- Slide 8: Financials (Costs vs Revenue) -->
+    <section class="slide" id="slide-7">
+        <div class="slide__inner">
+            <div class="slide__meta"><span class="pill">Slide 7</span> Financials</div>
+            <h1>Costs vs. Revenue (A hopeful Model)</h1>
+            <ul>
+                <li><strong>Cost:</strong> Domain & hosting ≈ <strong>$20/year</strong> <span
+                        style="color:var(--red)">■</span></li>
+                <li><strong>Future scale cost:</strong> infra/support as we grow <span
+                        style="color:var(--red-light)">■</span></li>
+                <li><strong>Revenue:</strong> Schools/Districts <strong>$5,000/year</strong> × <strong>3
+                        clients</strong> <span style="color:var(--green)">■</span></li>
+                <li><strong>Revenue:</strong> Government subsidy stream <span style="color:var(--purple)">■</span></li>
+            </ul>
+            <div id="chart-financials" class="chart" aria-label="Costs vs revenue"></div>
+        </div>
+    </section>
+
+    <!-- Slide 9: Call to Action -->
+    <section class="slide" id="slide-8">
+        <div class="slide__inner">
+            <div class="slide__meta"><span class="pill">Slide 8</span></div>
+            <img src="greenStickerLogo.png" alt="Green Sticker Logo" class="logo" />
+            <h1>Join Me</h1>
+            <p class="center"><strong>Make lives better for others.</strong></p>
+            
+        </div>
+    </section>
 
     <script>
-        // Sample data for charts
-        const reachData = [
-            {
-                x: [1, 2, 3, 4],
-                y: [500000, 620000, 710000, 800000],
-                type: 'scatter',
-                mode: 'lines+markers',
-                name: 'Waylor - Instagram',
-                line: {color: '#FF6B6B', width: 3},
-                marker: {size: 8}
-            },
-            {
-                x: [1, 2, 3, 4],
-                y: [150000, 180000, 210000, 250000],
-                type: 'scatter',
-                mode: 'lines+markers',
-                name: 'Waylor - TikTok',
-                line: {color: '#FF6B6B', width: 3, dash: 'dash'},
-                marker: {size: 8, symbol: 'diamond'}
-            },
-            {
-                x: [1, 2, 3, 4],
-                y: [2100000, 2400000, 2700000, 2550000],
-                type: 'scatter',
-                mode: 'lines+markers',
-                name: 'Sustin - Instagram',
-                line: {color: '#4ECDC4', width: 3},
-                marker: {size: 8}
-            },
-            {
-                x: [1, 2, 3, 4],
-                y: [400000, 455000, 500000, 530000],
-                type: 'scatter',
-                mode: 'lines+markers',
-                name: 'Sustin - TikTok',
-                line: {color: '#4ECDC4', width: 3, dash: 'dash'},
-                marker: {size: 8, symbol: 'diamond'}
-            }
-        ];
+        const GREEN = '#22A06B';
+        const BLUE = '#1572A1';
+        const RED = '#C53030';
+        const RED_LIGHT = '#F56565';
+        const PURPLE = '#6B46C1';
 
-        const reachLayout = {
-            title: {
-                text: 'Reach Growth: Instagram & TikTok Followers Over Time',
-                font: {size: 20, color: 'white'},
-                x: 0.5
-            },
-            xaxis: {
-                title: 'Week Number', 
-                color: 'white',
-                showgrid: true,
-                gridcolor: 'rgba(255,255,255,0.1)',
-                zeroline: false
-            },
-            yaxis: {
-                title: 'Followers/Views', 
-                color: 'white',
-                showgrid: true,
-                gridcolor: 'rgba(255,255,255,0.1)',
-                zeroline: false
-            },
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            font: {color: 'white', size: 12},
-            legend: {
-                x: 0.02, 
-                y: 0.98, 
-                bgcolor: 'rgba(0,0,0,0.7)',
-                bordercolor: 'rgba(255,255,255,0.2)',
-                borderwidth: 1
-            },
-            margin: {l: 60, r: 60, t: 60, b: 60},
-            autosize: true
-        };
+        // Slide 1 chart (cost comparison)
+        function renderProblemCosts() {
+            Plotly.newPlot('chart-problem-costs', [{
+                type: 'bar', x: ['Tobii', 'IRISBOND', 'Green Sticker'], y: [3000, 1500, 20], marker: { color: [BLUE, '#C64A4A', GREEN] }
+            }], { title: 'Cost Comparison (USD)', yaxis: { title: 'USD' } }, { responsive: true, displayModeBar: false });
+        }
 
-        Plotly.newPlot('reach-chart', reachData, reachLayout);
+        // Slide 2 chart (market growth)
+        function renderMarketGrowth() {
+            const years = ['2023', '2024', '2025', '2030', '2033'];
+            const values = [26.8, 27.5, 28.5, 35.0, 41.0];
+            Plotly.newPlot('chart-market-growth', [{ x: years, y: values, mode: 'lines+markers', name: 'Market Size', line: { color: GREEN } }], { title: 'Assistive Tech Market Growth (USD Billions)', xaxis: { title: 'Yearly Growth' }, yaxis: { title: 'Billions' } }, { responsive: true, displayModeBar: false });
+        }
 
-        // Engagement chart
-        const engagementData = [
-            {
-                x: [18, 22, 25, 27],
-                y: [7.8, 8.2, 8.6, 8.9],
-                type: 'scatter',
-                mode: 'markers',
-                name: 'Waylor',
-                marker: {
-                    size: [5, 6.2, 7.1, 8],
-                    color: '#FF6B6B',
-                    opacity: 0.7,
-                    line: {width: 2, color: 'white'}
-                }
-            },
-            {
-                x: [33, 32, 29, 27],
-                y: [8.5, 8.3, 7.6, 7.2],
-                type: 'scatter',
-                mode: 'markers',
-                name: 'Keah',
-                marker: {
-                    size: [14, 15.2, 13.5, 12],
-                    color: '#4ECDC4',
-                    opacity: 0.7,
-                    line: {width: 2, color: 'white'}
-                }
-            },
-            {
-                x: [34, 32, 31, 30],
-                y: [7.9, 8.1, 8.4, 8.0],
-                type: 'scatter',
-                mode: 'markers',
-                name: 'Sustin',
-                marker: {
-                    size: [21, 24, 27, 25.5],
-                    color: '#45B7D1',
-                    opacity: 0.7,
-                    line: {width: 2, color: 'white'}
-                }
-            }
-        ];
+        // Slide 3 chart (radar)
+        function renderCompetition() {
+            const cats = ['Affordability', 'Ease', 'Hardware', 'Accuracy', 'Scalability'];
+            function t(n, r, c) { return { type: 'scatterpolar', r, theta: cats, fill: 'toself', name: n, line: { color: c }, fillcolor: c + '33' }; }
+            const data = [
+                t('Tobii', [3, 7, 9, 8, 5], BLUE),
+                t('IRISBOND', [5, 6, 7, 6, 6], '#C64A4A'),
+                t('Green Sticker', [9, 9, 2, 6, 9], GREEN)
+            ];
+            Plotly.newPlot('chart-competition', data, { polar: { radialaxis: { visible: true, range: [0, 10] } }, title: 'Competitor Comparison' }, { responsive: true, displayModeBar: false });
+        }
+        
+       
 
-        const engagementLayout = {
-            title: {
-                text: 'Engagement Efficiency: Screen Time vs Poll Rating',
-                font: {size: 20, color: 'white'},
-                x: 0.5
-            },
-            xaxis: {
-                title: 'Average Screen Time per Episode (minutes)', 
-                color: 'white',
-                showgrid: true,
-                gridcolor: 'rgba(255,255,255,0.1)',
-                zeroline: false
-            },
-            yaxis: {
-                title: 'Viewer Poll Rating (out of 10)', 
-                color: 'white',
-                showgrid: true,
-                gridcolor: 'rgba(255,255,255,0.1)',
-                zeroline: false
-            },
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            font: {color: 'white', size: 12},
-            legend: {
-                x: 0.02, 
-                y: 0.98, 
-                bgcolor: 'rgba(0,0,0,0.7)',
-                bordercolor: 'rgba(255,255,255,0.2)',
-                borderwidth: 1
-            },
-            margin: {l: 60, r: 60, t: 60, b: 60},
-            autosize: true
-        };
+        // Slide 6 chart (adoption)
+        function renderBizmodel() {
+            const years = ['Y1', 'Y2', 'Y3', 'Y4', 'Y5'];
+            const users = [100, 1000, 5000, 10000, 20000];
+            Plotly.newPlot('chart-bizmodel', [{ x: years, y: users, mode: 'lines+markers', line: { color: GREEN } }], { title: 'Projected Students Served' }, { responsive: true, displayModeBar: false });
+        }
 
-        Plotly.newPlot('engagement-chart', engagementData, engagementLayout);
+        // Slide 8 chart (costs vs revenue)
+        function renderFinancials() {
+            const years = ['Y1', 'Y2', 'Y3', 'Y4', 'Y5'];
+            const costDomain = { type: 'bar', name: 'Cost — Domain ($20/yr)', x: years, y: [20, 20, 20, 20, 20], marker: { color: RED } };
+            const costScale = { type: 'bar', name: 'Cost — Future Scale', x: years, y: [0, 500, 2000, 4000, 7000], marker: { color: RED_LIGHT } };
+            const revSchools = { type: 'bar', name: 'Revenue — Schools (3×$5k)', x: years, y: [15000, 15000, 15000, 15000, 15000], marker: { color: GREEN } };
+            const revGov = { type: 'bar', name: 'Revenue — Gov Subsidy', x: years, y: [0, 10000, 30000, 60000, 90000], marker: { color: PURPLE } };
+            Plotly.newPlot('chart-financials', [costDomain, costScale, revSchools, revGov], { title: 'Costs vs Revenue (USD per Year)', barmode: 'group', yaxis: { title: 'USD' }, legend: { orientation: 'h' } }, { responsive: true, displayModeBar: false });
+        }
 
-        // ROI chart
-        const roiData = [{
-            x: ['Waylor', 'Muda', 'Keah', 'Sustin', 'Clandria'],
-            y: [7.6, 6.2, 3.1, 2.8, 4.1],
-            type: 'bar',
-            marker: {
-                color: [7.6, 6.2, 3.1, 2.8, 4.1],
-                colorscale: 'Viridis'
-            },
-            text: ['$7.6', '$6.2', '$3.1', '$2.8', '$4.1'],
-            textposition: 'outside'
-        }];
-
-        const roiLayout = {
-            title: {
-                text: 'ROI Analysis: Poll Rating per $100K Investment',
-                font: {size: 20, color: 'white'},
-                x: 0.5
-            },
-            xaxis: {
-                title: 'Contestant', 
-                color: 'white',
-                showgrid: true,
-                gridcolor: 'rgba(255,255,255,0.1)',
-                zeroline: false
-            },
-            yaxis: {
-                title: 'ROI per $100K', 
-                color: 'white',
-                showgrid: true,
-                gridcolor: 'rgba(255,255,255,0.1)',
-                zeroline: false
-            },
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            font: {color: 'white', size: 12},
-            margin: {l: 60, r: 60, t: 60, b: 60},
-            autosize: true
-        };
-
-        Plotly.newPlot('roi-chart', roiData, roiLayout);
-
-        // 3D Persona clustering chart
-        const persona3DData = [{
-            x: [0.2, 0.8, 0.6, 0.9, 0.3],
-            y: [0.7, 0.4, 0.3, 0.5, 0.2],
-            z: [0.8, 0.3, 0.4, 0.2, 0.6],
-            type: 'scatter3d',
-            mode: 'markers+text',
-            name: 'Contestants',
-            marker: {
-                size: 8,
-                color: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'],
-                opacity: 0.8,
-                line: {width: 2, color: 'white'}
-            },
-            text: ['Waylor', 'Muda', 'Keah', 'Sustin', 'Clandria'],
-            textposition: 'top center',
-            textfont: {color: 'white', size: 14}
-        }];
-
-        const persona3DLayout = {
-            title: {
-                text: '3D Contestant Persona Analysis: Reach vs Engagement vs ROI',
-                font: {size: 20, color: 'white'},
-                x: 0.5
-            },
-            scene: {
-                xaxis: {
-                    title: 'Reach Score',
-                    color: 'white',
-                    backgroundcolor: 'rgba(0,0,0,0)',
-                    gridcolor: 'rgba(255,255,255,0.1)',
-                    zerolinecolor: 'rgba(255,255,255,0.2)'
-                },
-                yaxis: {
-                    title: 'Engagement Score',
-                    color: 'white',
-                    backgroundcolor: 'rgba(0,0,0,0)',
-                    gridcolor: 'rgba(255,255,255,0.1)',
-                    zerolinecolor: 'rgba(255,255,255,0.2)'
-                },
-                zaxis: {
-                    title: 'ROI Score',
-                    color: 'white',
-                    backgroundcolor: 'rgba(0,0,0,0)',
-                    gridcolor: 'rgba(255,255,255,0.1)',
-                    zerolinecolor: 'rgba(255,255,255,0.2)'
-                },
-                bgcolor: 'rgba(0,0,0,0)',
-                camera: {
-                    eye: {x: 1.5, y: 1.5, z: 1.5}
-                }
-            },
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            font: {color: 'white', size: 12},
-            showlegend: false,
-            margin: {l: 60, r: 60, t: 60, b: 60},
-            autosize: true
-        };
-
-        Plotly.newPlot('persona-3d-chart', persona3DData, persona3DLayout);
-
-        // Enhanced scroll animations and interactions
-        let hasScrolled = false;
-        let isScrolling = false;
-
-        // Smooth scroll indicator behavior
-        window.addEventListener('scroll', function() {
-            if (!hasScrolled) {
-                hasScrolled = true;
-                document.querySelector('.scroll-indicator').style.animation = 'fadeOut 0.5s ease forwards';
-                setTimeout(() => {
-                    document.querySelector('.scroll-indicator').style.display = 'none';
-                }, 500);
-            }
-
-            // Add scroll-based animations
-            if (!isScrolling) {
-                isScrolling = true;
-                setTimeout(() => {
-                    isScrolling = false;
-                }, 100);
-            }
-        });
-
-        // Add fadeOut animation for scroll indicator
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeOut {
-                to { opacity: 0; transform: translateY(20px); }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Intersection Observer for slide animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animationPlayState = 'running';
-                }
-            });
-        }, observerOptions);
-
-        // Observe all slides for scroll-triggered animations
-        document.querySelectorAll('.slide').forEach(slide => {
-            observer.observe(slide);
-        });
-
-        // Add hover effects to charts
-        document.querySelectorAll('.chart-container').forEach(container => {
-            container.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-10px) scale(1.02)';
-            });
-            
-            container.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
-        });
-
-        // Add click-to-scroll functionality to scroll indicator
-        document.querySelector('.scroll-indicator').addEventListener('click', function() {
-            window.scrollTo({
-                top: window.innerHeight,
-                behavior: 'smooth'
-            });
+        window.addEventListener('load', () => {
+            renderProblemCosts();
+            renderMarketGrowth();
+            renderCompetition();
+            renderBizmodel();
+            renderFinancials();
         });
     </script>
 </body>
+
 </html>
