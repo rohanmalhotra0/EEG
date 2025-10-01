@@ -36,8 +36,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 32px
+            padding: 32px;
+        
+            /* NEW background */
+
         }
+        
 
         .slide__inner {
             max-width: 1100px;
@@ -45,9 +49,10 @@
             border: 1px solid var(--muted);
             border-radius: 14px;
             padding: 32px;
-            background: #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, .05)
+
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .8);
         }
+        
 
         .slide__meta {
             color: var(--green-dark);
@@ -149,29 +154,48 @@
 </head>
 
 <body>
+<!-- Slide 0: Title -->
+<section class="slide" id="slide-0" style="">
+    <div class="slide__inner" style="text-align:center; padding:60px;">
 
-    <!-- Slide 0: Title -->
-    <section class="slide" id="slide-0">
-        <div class="slide__inner">
-            <div class="slide__meta"><span class="pill">Slide 0</span> Welcome</div>
-            <img src="greenStickerLogo.png" alt="Green Sticker Logo" class="logo" />
-            <h1>Green Sticker</h1>
-            <p style="font-size:1.2rem;max-width:700px;margin:0 auto 20px;text-align:center">Accessible technology
-                designed to
-                empower children with disabilities</p>
-            <div class="grid two" style="margin-top:16px">
-                <div class="hero">
-                    <strong>Our Mission</strong>
-                    <p>Provide low‑cost, easy‑to‑use access tools so every child can participate fully online.</p>
-                </div>
-                <div class="hero">
-                    <strong>Our Approach</strong>
-                    <p>Leverage computer vision and voice technologies directly in the browser, no expensive hardware
-                        required.</p>
-                </div>
+        <!-- Logo -->
+        <img src="greenStickerLogo.png" alt="Green Sticker Logo" class="logo"
+            style="max-width:140px; margin-bottom:20px;" />
+
+        <!-- Title -->
+        <h1 style="font-size:3rem; font-weight:800; color:#15724B; margin-bottom:12px; letter-spacing:-1px;">
+            Green Sticker
+        </h1>
+
+        <!-- Tagline -->
+        <p style="font-size:1.3rem; color:#245543; opacity:0.85; max-width:700px; margin:0 auto 40px; line-height:1.5;">
+            Accessible technology designed to <br>
+            empower children with disabilities
+        </p>
+
+        <!-- Mission & Approach Cards -->
+        <div class="grid two" style="margin-top:30px; gap:24px;">
+            <div class="hero"
+                style="padding:24px; background:#fff; border:1px solid #E5E7EB; box-shadow:0 4px 8px rgba(0,0,0,0.05);">
+                
+                <strong style="font-size:1.2rem;">Our Mission</strong>
+                <p style="margin-top:8px; font-size:1rem; line-height:1.4; color:#333;">
+                    Provide low-cost, easy to use tools so every child can participate fully online.
+                </p>
+            </div>
+            <div class="hero"
+                style="padding:24px; background:#fff; border:1px solid #E5E7EB; box-shadow:0 4px 8px rgba(0,0,0,0.05);">
+
+                <strong style="font-size:1.2rem;">Our Approach</strong>
+                <p style="margin-top:8px; font-size:1rem; line-height:1.4; color:#333;">
+                    Computer vision and voice technology directly in the browser, no expensive hardware
+                    required.
+                </p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+  
     <!-- Slide 1: Purpose & Problem (combined) -->
     <section class="slide" id="slide-1">
         <div class="slide__inner">
