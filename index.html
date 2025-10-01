@@ -341,14 +341,40 @@
             </div>
         </div>
     </section>
+<!-- Slide 7: Product-Market Fit -->
+<section class="slide" id="slide-7">
+    <div class="slide__inner">
+        <div class="slide__meta"><span class="pill">Slide 7</span> Product-Market Fit</div>
+        <h1>Product Market Fit</h1>
+        <!-- Insights (smaller) -->
+        <div class="card">
+            <p><strong>Key Insights</strong></p>
+            <ul>
+                <li><strong>Affordability:</strong> Costs almost nothing compared to competitors.</li>
+                <li><strong>Ease of Adoption:</strong> No special hardware; works in any browser.</li>
+                <li><strong>Market Reach:</strong> Scales from classrooms to entire districts.</li>
+            </ul>
+            <div class="hero">
+                Green Sticker sits at the <strong>sweet spot</strong> of price, usability, and reach.
+            </div>
+        </div>
+        <div class="grid two-uneven">
+            <!-- Chart (larger) -->
+            <div class="card">
+                <div id="chart-pmf-3d" class="chart" style="height:500px;" aria-label="Product Market Fit 3D chart">
+                </div>
+            </div>
 
-
-
+           
+        </div>
+    </div>
+</section>
+  
 
     <!-- Slide 8: Financials (Costs vs Revenue) -->
-    <section class="slide" id="slide-7">
+    <section class="slide" id="slide-8">
         <div class="slide__inner">
-            <div class="slide__meta"><span class="pill">Slide 7</span> Financials</div>
+            <div class="slide__meta"><span class="pill">Slide 8</span> Financials</div>
             <h1>Costs vs. Revenue (A hopeful Model)</h1>
             <ul>
                 <li><strong>Cost:</strong> Domain & hosting ≈ <strong>$20/year</strong> <span
@@ -364,9 +390,9 @@
     </section>
 
     <!-- Slide 9: Call to Action -->
-    <section class="slide" id="slide-8">
+    <section class="slide" id="slide-9">
         <div class="slide__inner">
-            <div class="slide__meta"><span class="pill">Slide 8</span></div>
+            <div class="slide__meta"><span class="pill">Slide 9</span></div>
             <img src="greenStickerLogo.png" alt="Green Sticker Logo" class="logo" />
             <h1>Join Me</h1>
             <p class="center"><strong>Make lives better for others.</strong></p>
@@ -425,12 +451,66 @@
             const revGov = { type: 'bar', name: 'Revenue — Gov Subsidy', x: years, y: [0, 10000, 30000, 60000, 90000], marker: { color: PURPLE } };
             Plotly.newPlot('chart-financials', [costDomain, costScale, revSchools, revGov], { title: 'Costs vs Revenue (USD per Year)', barmode: 'group', yaxis: { title: 'USD' }, legend: { orientation: 'h' } }, { responsive: true, displayModeBar: false });
         }
+        // Slide X chart (Product-Market Fit 3D)
+            function renderPMF3D() {
+                const competitors = ["Tobii", "IRISBOND", "Green Sticker"];
 
+                // Scores on a 0–10 scale
+                const affordability = [2, 4, 10];   // X-axis
+                const usability = [6, 7, 9];        // Y-axis
+                const reach = [4, 5, 9];            // Z-axis
+
+                const colors = ["#1572A1", "#C53030", "#22A06B"];
+
+                const trace = {
+                    type: "scatter3d",
+                    mode: "markers+text",
+                    x: affordability,
+                    y: usability,
+                    z: reach,
+                    text: competitors,
+                    textposition: "top center",
+                    marker: {
+                        size: 12,
+                        color: colors,
+                        opacity: 0.9,
+                        line: { width: 2, color: "#fff" }
+                    },
+                    hovertemplate:
+                        "<b>%{text}</b><br>Affordability: %{x}<br>Usability: %{y}<br>Reach: %{z}<extra></extra>"
+                };
+
+                const layout = {
+
+                    scene: {
+                        xaxis: { title: "Affordability", dtick: 1 },
+                        yaxis: { title: "Hardware", dtick: 1 },
+                        zaxis: { title: "Reach" , dtick: 1 },
+                        camera: {
+                            eye: { x: 1.3, y: 2.5, z: 0.4 }  // 👈 farther out = more zoomed out
+                        }
+                
+                    },
+                    margin: { l: 0, r: 0, b: 0, t: 0 }, // remove extra space at the top
+                    showlegend: false,
+                    height: 370
+                };
+
+                Plotly.newPlot("chart-pmf-3d", [trace], layout, {
+                    responsive: true,
+                    displayModeBar: false
+                });
+            }
+
+
+        
         window.addEventListener('load', () => {
             renderProblemCosts();
             renderMarketGrowth();
             renderCompetition();
+            
             renderBizmodel();
+            renderPMF3D();
             renderFinancials();
         });
     </script>
