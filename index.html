@@ -464,7 +464,7 @@
         function renderBizmodel() {
             const years = ['Y1', 'Y2', 'Y3', 'Y4', 'Y5'];
             const users = [100, 1000, 5000, 10000, 20000];
-            Plotly.newPlot('chart-bizmodel', [{ x: years, y: users, mode: 'lines+markers', line: { color: GREEN } }], { title: 'Projected Students Served' }, { responsive: true, displayModeBar: false });
+            Plotly.newPlot('chart-bizmodel', [{ x: years, y: users, mode: 'lines+markers', line: { color: GREEN } }], { title: 'Projected Students Served', xaxis: { title: 'Yearly Growth' }, yaxis: { title: 'Students Helped' }  }, { responsive: true, displayModeBar: false });
         }
 
         // Slide 8 chart (costs vs revenue)
